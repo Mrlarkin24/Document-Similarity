@@ -13,6 +13,7 @@ import javax.management.relation.RelationServiceNotRegisteredException;
 
 import ie.gmit.sw.ExtraShingles;
 import ie.gmit.sw.Shingles;
+import ie.gmit.sw.Jaccard;
 
 /**
  * The Type FileParser. A FileParser is a{@link Runnable} implementation
@@ -23,6 +24,7 @@ public class FileParser implements Runnable {
 	private int shingleSize, k;
 	private Deque<String> buffer = new LinkedList<>();
 	private int docId;
+	private static int count = 0;
 
 	// private StringBuffer sb = new StringBuffer();
 	// Constructor
@@ -38,18 +40,20 @@ public class FileParser implements Runnable {
 	 * @param shingleSize
 	 *            the specified size of the shingles
 	 */
-	public FileParser(BlockingQueue<Shingles> queue, String fileName, int shingleSize) {
+	public FileParser(BlockingQueue<Shingles> queue, String fileName, int shingleSize, int docId) {
 		super();
 		this.queue = queue;
 		this.fileName = fileName;
 		this.shingleSize = shingleSize;
+		this.docId = docId;
+		
 		// this.k = k;
 	}
 
 	@Override
 	public void run() {
 		BufferedReader br = null;
-
+		
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
 		} catch (FileNotFoundException e1) {
@@ -94,8 +98,18 @@ public class FileParser implements Runnable {
 				// System.out.println( bufferStr+" Shingle hash:" +
 				// s.getShingleHashCode()+" buffer size:"+buffer.size()+"
 				// i="+i+"\n");
+				
+				
+				
 				System.out.print("\tShingle hash:" + s.getShingleHashCode() + "\tbuffer size:" + buffer.size() + " i="
-						+ i + "\n"); // used for debugging
+						+ i + " DocumentId: " + this.docId +"\n"); // used for debugging
+				
+				if(this.docId==0){
+					Jaccard.setHashCodeA(s.getShingleHashCode());
+				}
+				else {
+					Jaccard.setHashCodeB(s.getShingleHashCode());
+				}
 
 			}
 			// }
@@ -117,6 +131,8 @@ public class FileParser implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		Jaccard.setDone();
 
 	}// run
 

@@ -9,7 +9,7 @@ public class Interface {
 	
 	
 	public Interface() {
-		//super();
+		super();
 	}
 	/*
 	 * function to launch a menu to the user menu will allow user to enter 2
