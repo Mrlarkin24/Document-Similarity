@@ -14,7 +14,7 @@ public class Jaccard {
 		jaccardIndex = (inter * 100) / (HashCodeA.size() + HashCodeB.size() - inter);
 
 		System.out.println("\n-------------------------------------------------------------\n" + "Similarity: "
-				+ jaccardIndex + "%\n-------------------------------------------------------------\n");
+				+ jaccardIndex + "%\n-------------------------------------------------------------");
 	}
 
 	public static void setHashCodeA(int shingleHashCode) {
