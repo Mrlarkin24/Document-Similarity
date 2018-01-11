@@ -9,8 +9,8 @@ import java.util.Scanner;
 public class BackEnd {
 
 	static Scanner scanner = new Scanner(System.in);
-	public static String showMainMenu = "Document Similarity APi Main Menu\n1: Start Similarity Check\n2: Exit system";
-	
+	public static String showMainMenu = "Document Similarity API Main Menu\n1: Start Similarity Check\n2: Exit Program";
+
 	/**
 	 * Method to display a string to console and return a string input
 	 * 

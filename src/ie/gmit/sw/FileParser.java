@@ -9,9 +9,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 
-import javax.management.relation.RelationServiceNotRegisteredException;
-
-import ie.gmit.sw.ExtraShingles;
 import ie.gmit.sw.Shingles;
 import ie.gmit.sw.Jaccard;
 
@@ -21,15 +18,10 @@ import ie.gmit.sw.Jaccard;
 public class FileParser implements Runnable {
 	private BlockingQueue<Shingles> queue;
 	private String fileName;
-	private int shingleSize, k;
+	private int shingleSize;
 	private Deque<String> buffer = new LinkedList<>();
 	private int docId;
-	private static int count = 0;
 
-	// private StringBuffer sb = new StringBuffer();
-	// Constructor
-	// public FileParser(BlockingQueue<Shingle> queue, String fileName, int
-	// shingleSize, int k) {
 	/**
 	 * Instantiates a new FileParser
 	 * 
@@ -46,19 +38,18 @@ public class FileParser implements Runnable {
 		this.fileName = fileName;
 		this.shingleSize = shingleSize;
 		this.docId = docId;
-		
-		// this.k = k;
 	}
 
 	@Override
 	public void run() {
 		BufferedReader br = null;
-		
+
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 			System.out.println("File " + fileName + " not found");
+
 		}
 		String line = "";
 
@@ -73,41 +64,24 @@ public class FileParser implements Runnable {
 					// Add array of words to buffer
 					addWordsToBuffer(words);
 
-					// Shingle s = getNextShingle();
-					// queue.put(s); // Blocking method. Add is not a blocking
-					// method
-					// for (String word : words) {
-					// System.out.print(word+" ");
-					// }
-					// System.out.print(words.toString() + " Shingle hash:" +
-					// s.getShingleHashCode()+"\n");
 				}
 			} // while
-				// while(shCounter!=buffer.size()){
 
 			/*
 			 * Iterate through buffer until buffer is emptied (buffer.size>0)
 			 * With every iteration a Shingle s is created and added to queue
 			 */
-			for (int i = 0; buffer.size() > 0; i++) {
-				// String bufferStr= ((LinkedList<String>) buffer).get(i)+"
-				// "+((LinkedList<String>) buffer).get(i+1)+"
-				// "+((LinkedList<String>) buffer).get(i+2);
+			while (buffer.size() != 0) {
+
 				Shingles s = getNextShingle();
 				queue.put(s); // Blocking method. Add is not a blocking
-				// System.out.println( bufferStr+" Shingle hash:" +
-				// s.getShingleHashCode()+" buffer size:"+buffer.size()+"
-				// i="+i+"\n");
-				
-				
-				
-				System.out.print("\tShingle hash:" + s.getShingleHashCode() + "\tbuffer size:" + buffer.size() + " i="
-						+ i + " DocumentId: " + this.docId +"\n"); // used for debugging
-				
-				if(this.docId==0){
+
+				// System.out.print("\tShingle hash:" + s.getShingleHashCode()
+				// + "\tbuffer size:" + buffer.size() + " i="+ i + " DocumentId: " + this.docId +"\n"); // used for debugging
+
+				if (this.docId == 0) {
 					Jaccard.setHashCodeA(s.getShingleHashCode());
-				}
-				else {
+				} else {
 					Jaccard.setHashCodeB(s.getShingleHashCode());
 				}
 
@@ -122,16 +96,11 @@ public class FileParser implements Runnable {
 		}
 
 		try {
-			flushBuffer();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		try {
 			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		Jaccard.setDone();
 
 	}// run
@@ -161,11 +130,15 @@ public class FileParser implements Runnable {
 		int counter = 0;
 
 		while (counter < shingleSize) {
+			
 			if (buffer.peek() != null) {
-				System.out.print(buffer.peek() + " "); // Used for debugging
+				// System.out.print(buffer.peek() + " "); // Used for debugging
 				sb.append(buffer.poll());
 				counter++;
+			} else if (sb != null) {
+				counter++;
 			}
+			
 		}
 
 		if (sb.length() > 0) {
@@ -175,24 +148,6 @@ public class FileParser implements Runnable {
 			return (new Shingles(docId, sb.toString().hashCode()));
 		} else {
 			return (null);
-		}
-	}
-
-	/**
-	 * Any values left in the buffer are added to a final Shingle s and placed
-	 * on the queue
-	 * 
-	 * @throws InterruptedException
-	 *             when a thread is waiting, sleeping, or otherwise occupied
-	 */
-	private void flushBuffer() throws InterruptedException {
-		while (buffer.size() > 0) {
-			Shingles s = getNextShingle();
-			if (s != null) {
-				queue.put(s);
-			} else {
-				queue.put(new ExtraShingles(docId, 0));
-			}
 		}
 	}
 

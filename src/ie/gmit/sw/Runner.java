@@ -20,22 +20,22 @@ public class Runner {
 		
 				Thread t1 = new Thread(new FileParser(q, ui.getFileNameA(), ui.getShingleSize(), 0),"A");
 				Thread t2 = new Thread(new FileParser(q, ui.getFileNameB(), ui.getShingleSize(), 1),"B");
-		
+				
+				System.out.println("\nProcessing... please wait...");
+				
 				t1.start();
 				t2.start();
 				
 				do{
 					if(Jaccard.getDone()==2){
 						Jaccard.setDone();
-						System.out.println("meant to be working");
 						Jaccard.calculations();
 					}
 				}while(!(Jaccard.getDone()==3));
 				Jaccard.setDone(0);
-				//new Jaccard();
 			}
 			
-		}while(!(ui.getOption()==2));
+		} while (!(ui.getOption()==2));
 		
 	}
 

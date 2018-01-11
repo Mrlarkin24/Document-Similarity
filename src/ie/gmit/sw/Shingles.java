@@ -1,7 +1,7 @@
 package ie.gmit.sw;
 
 public class Shingles {
-	private int documentId;// call them doc 0 and doc 1
+	private int documentId; // call them doc 0 and doc 1
 	private int shingleHashCode;
 
 	public Shingles(int documentId, int shingleHashCode) {
@@ -9,10 +9,8 @@ public class Shingles {
 		this.documentId = documentId;
 		this.shingleHashCode = shingleHashCode;
 	}
-	
-	
-	
-// get and set
+
+	// get and set
 	protected int getDocumentId() {
 		return documentId;
 	}
@@ -41,7 +39,5 @@ public class Shingles {
 		// TODO Auto-generated method stub
 		return super.hashCode();
 	}
-
-	/// int hash = t.hashCode();
 
 }
